@@ -1,0 +1,54 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package os;
+
+/**
+ *
+ * @author Kristine Mae Adlaon
+ */
+import java.io.*;
+import java.lang.*;
+import java.util.*;
+//First Thread
+
+class MyThread1 implements Runnable {
+
+    private long local;
+    private double startTime;
+    private long sqrtInput;
+    private boolean composite = false;
+
+    public MyThread1(long a, double b, long c) {
+        local = a;
+        startTime = b;
+        sqrtInput = c;
+    }
+
+    public void run() {
+        for (int x = 3; x < sqrtInput; x++) {
+            if (local % x == 0) 
+             composite = true;
+        }
+        double stopTime = System.nanoTime();
+        double elapsedTime = ((stopTime - startTime) / 1000000);
+        System.out.printf("%d is %s",local,composite ? "Composite" : "Prime");
+        System.out.println("\n\nExecution Time:" + elapsedTime);
+    }
+}
+
+public class MachineProblem01_PRIME {
+    public static long input;
+    public static long sqrtInput;
+    
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        input = Long.parseLong(br.readLine());
+        sqrtInput = (long) Math.ceil(Math.sqrt(input));
+        double startTime = System.nanoTime();
+        Runnable t1 = new MyThread1(input, startTime, sqrtInput);
+        t1.run();
+    }
+}
