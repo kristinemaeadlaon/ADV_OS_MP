@@ -1,0 +1,119 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package os;
+
+/**
+ *
+ * @author Sam Ong
+ */
+import java.io.*;
+import java.lang.*;
+import java.util.*;
+
+public class MachineProblem01_PRIME_multi1_ThreadPool {
+
+    static boolean IS_COMPOSITE = false;
+    private static List<ThreadMeta> metaList = new ArrayList<>();
+
+    public static void main(String[] args) throws IOException {
+
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        long number = Long.parseLong(br.readLine());
+        long startTime = System.nanoTime();
+        int numberOfThreads = 100000;
+        ThreadMeta.number = number;
+
+        //setup
+        delegateThreads(number, numberOfThreads);
+
+        for (ThreadMeta meta : metaList) {
+            Thread thread = new Thread(new PrimeLooper(meta, startTime));
+            meta.thread = thread;
+            thread.start();
+        }
+        try {
+            for (ThreadMeta meta : metaList) {
+                meta.thread.join();
+            }
+        } catch (InterruptedException e) {
+
+        }
+        // After all the threads finish. Calculate Time finish
+        long stopTime = System.nanoTime();
+        long elapsedTime = (stopTime - startTime) / 1000000;
+        System.out.printf("%d is %s\n", number, IS_COMPOSITE ? "composite"
+                : "prime" + "\n\nElapsed Time:" + elapsedTime);
+        //prints out the last number 
+        for (ThreadMeta meta : metaList) {
+            System.out.printf("\n%s's last processed number is %d", meta.thread.getName(), meta.lastProcessedNumber);
+        }
+    }
+
+    public static void delegateThreads(long number, int numberOfThreads) {
+        int start = 3, end = (int) (Math.ceil(Math.sqrt(number)));
+        int total_length = end - start;
+        int subrange_length = (int) (Math.ceil((total_length / numberOfThreads)));
+        int current_start = start;
+
+        for (int i = 1; i <= numberOfThreads; ++i) {
+
+            ThreadMeta meta = new ThreadMeta();
+            meta.start = current_start % 2 == 0 ? current_start - 1
+                    : current_start;
+            meta.end = (current_start + subrange_length);
+            metaList.add(meta);
+
+            current_start += subrange_length + 1;
+        }
+
+        metaList.get(metaList.size() - 1).end = end;
+        System.out.println("Ranges of the threads:" + metaList);
+    }
+}
+
+/*
+ *  This is the Thread
+ */
+class PrimeLooper implements Runnable {
+
+    public void run() {
+        if (ThreadMeta.number % 2 == 0) {
+            meta.lastProcessedNumber = 2;
+            System.out.printf("%d is divisible by %d\n", ThreadMeta.number, 2);
+            MachineProblem01_PRIME_multi1_ThreadPool.IS_COMPOSITE = true;
+        }
+
+        // e.g. 1 - 1000 or 2 - 1000
+        for (int i = meta.start; i <= meta.end && !MachineProblem01_PRIME_multi1_ThreadPool.IS_COMPOSITE; i += 2) {
+            meta.lastProcessedNumber = i;
+
+            if (ThreadMeta.number % i == 0) {
+                System.out.printf("%d is divisible by %d\n", ThreadMeta.number, i);
+                MachineProblem01_PRIME_multi1_ThreadPool.IS_COMPOSITE = true;
+            }
+        }
+    }
+
+    ThreadMeta meta;
+
+    PrimeLooper(ThreadMeta meta, long startime) {
+        this.meta = meta;
+        long starting = startime;
+    }
+}
+
+class ThreadMeta {
+
+    int start;
+    int end;
+    Thread thread;
+    static long number;
+    int lastProcessedNumber;
+
+    public String toString() {
+        return String.format("[%d - %d]", start, end);
+    }
+}
