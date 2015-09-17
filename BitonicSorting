@@ -1,0 +1,85 @@
+package os;
+/*
+ * @author Kristine Mae Adlaon
+ */
+import java.util.ArrayList;
+import java.util.Collections;
+import java.io.*;
+
+class Implement_Bitonic_Sort {
+
+    public int[] a;
+    private final static boolean ASCENDING = true;    // sorting direction
+
+    public void sortMain(int[] a) {
+        this.a = a;
+        sortSub(0, a.length, ASCENDING);
+    }
+
+    /**
+     * produce a bitonic sequence by recursively sorting its two halves in
+ opposite directions, and then calls merge
+     */
+    private void sortSub(int start, int arrayLength, boolean dir) {
+        if (arrayLength > 1) {
+            int m = arrayLength / 2;
+            sortSub(start, m, !dir);
+            sortSub(start + m, arrayLength - m, dir);
+            merge(start, arrayLength, dir);
+        }
+    }
+    private void merge(int lo, int n, boolean dir) {
+        if (n > 1) {
+            int m = greatestPowerOfTwoLessThan(n);
+            for (int i = lo; i < lo + n - m; i++) {
+                compare(i, i + m, dir);
+            }
+            merge(lo, m, dir);
+            merge(lo + m, n - m, dir);
+        }
+    }
+    private void compare(int i, int j, boolean dir) {
+        if (dir == (a[i] > a[j])) {
+            swapper(i, j);
+        }
+    }
+    private void swapper(int i, int j) {
+        int t = a[i];
+        a[i] = a[j];
+        a[j] = t;
+    }
+    //gets the power of two from 1 to 
+    private int greatestPowerOfTwoLessThan(int n) {
+        int k = 1;
+        while (k < n) {
+            k = k << 1;
+        }
+        return k >> 1;
+    }
+}
+public class MachineProblem_Bitonic_Sorting {
+
+    public static void main(String args[]) throws IOException {
+        //input desired number of random numbers
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        int input = Integer.parseInt(br.readLine());
+        int b[] = new int[input];
+        ArrayList<Integer> list = new ArrayList<Integer>();
+        for (int i = 1; i <= input; i++) {
+            list.add(new Integer(i));
+        }
+        Collections.shuffle(list);
+        //shuffle distinct random numbers
+        for (int i = 0; i < input; i++) {
+            b[i] = list.get(i);
+            System.out.print(b[i] + ", ");
+        }
+        Implement_Bitonic_Sort s = new Implement_Bitonic_Sort();
+        s.sortMain(b);
+        //print the sorted array list
+        for (int x = 0; x < s.a.length; x++) {
+            System.out.print(" " + s.a[x]);
+        }
+
+    }
+}
