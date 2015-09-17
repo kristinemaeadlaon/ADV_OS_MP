@@ -48,7 +48,7 @@ class Implement_Bitonic_Sort {
         a[i] = a[j];
         a[j] = t;
     }
-    //gets the power of two from 1 to n
+    //gets the power of two from 1 to 
     private int greatestPowerOfTwoLessThan(int n) {
         int k = 1;
         while (k < n) {
@@ -69,17 +69,22 @@ public class MachineProblem_Bitonic_Sorting {
             list.add(new Integer(i));
         }
         Collections.shuffle(list);
-        //shuffle distinct random numbers
+        //get distinct random numbers
+        System.out.print("{");
         for (int i = 0; i < input; i++) {
             b[i] = list.get(i);
-            System.out.print(b[i] + ", ");
+            System.out.print(+b[i] + ", ");
         }
+        System.out.print("}");
         Implement_Bitonic_Sort s = new Implement_Bitonic_Sort();
         s.sortMain(b);
         //print the sorted array list
+        System.out.print("\n***************************************************\n");
+         System.out.print("{");
         for (int x = 0; x < s.a.length; x++) {
-            System.out.print(" " + s.a[x]);
+            System.out.print(s.a[x] + ", ");
         }
+        System.out.print("}\n\n");
 
     }
 }
