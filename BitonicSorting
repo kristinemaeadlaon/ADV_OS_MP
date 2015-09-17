@@ -48,7 +48,7 @@ class Implement_Bitonic_Sort {
         a[i] = a[j];
         a[j] = t;
     }
-    //gets the power of two from 1 to 
+    //gets the power of two from 1 to n
     private int greatestPowerOfTwoLessThan(int n) {
         int k = 1;
         while (k < n) {
